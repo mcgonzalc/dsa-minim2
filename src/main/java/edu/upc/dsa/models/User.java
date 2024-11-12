@@ -2,9 +2,10 @@ package edu.upc.dsa.models;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
 import java.util.List;
 
-@XmlType(propOrder = {"id", "name", "surname", "email", "birthday, history"})
+@XmlType(propOrder = {"id", "name", "surname", "email", "birthday", "history"})
 public class User {
 
     Integer id;
@@ -15,9 +16,11 @@ public class User {
     List<PointofInterest> history;
 
     public User() {
+        this.history = new ArrayList<>();
     }
 
     public User(Integer id, String name, String surname, String email, String birthday) {
+        this();
         this.setId(id);
         this.setName(name);
         this.setSurname(surname);
@@ -80,7 +83,12 @@ public class User {
         return history;
     }
 
-    public void setHistory(PointofInterest history)
+    public void setHistory(List<PointofInterest> history)
+    {
+        this.history = history;
+    }
+
+    public void addHistory(PointofInterest history)
     {
         this.history.add(history);
     }

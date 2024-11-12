@@ -1,8 +1,6 @@
 package edu.upc.dsa.models;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = {"type", "horizontal", "vertical"})
@@ -14,18 +12,6 @@ public class PointofInterest {
 
     //Constructor with no arguments that allows the serialization of a PointofInterest object
     public PointofInterest() {
-    }
-
-    @XmlEnum
-    public enum ElementType {
-        @XmlEnumValue("door") DOOR,
-        @XmlEnumValue("wall") WALL,
-        @XmlEnumValue("bridge") BRIDGE,
-        @XmlEnumValue("potion") POTION,
-        @XmlEnumValue("sword") SWORD,
-        @XmlEnumValue("coin") COIN,
-        @XmlEnumValue("grass") GRASS,
-        @XmlEnumValue("tree") TREE
     }
 
     //Constructor that defines the main characteristics of a PointofInterest
@@ -40,7 +26,7 @@ public class PointofInterest {
         return this.type;
     }
 
-    public void setType(ElementType id) {
+    public void setType(ElementType type) {
         this.type = type;
     }
 

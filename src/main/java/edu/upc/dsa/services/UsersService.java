@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.awt.*;
 import java.util.List;
 
 @Api(value = "/user", description = "Endpoint to User Service")
@@ -51,9 +52,9 @@ public class UsersService {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") Integer id) {
-        User d = this.gm.getUser(id);
-        if (d == null) return Response.status(404).build();
-        else  return Response.status(201).entity(d).build();
+        User u = this.gm.getUser(id);
+        if (u == null) return Response.status(404).build();
+        else  return Response.status(201).entity(u).build();
     }
 
     @POST
@@ -86,8 +87,32 @@ public class UsersService {
     @Path("/{id}/poi")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getListofPointsofInterest(@PathParam("id") Integer id) {
-        User d = this.gm.getUser(id);
-        if (d == null) return Response.status(404).build();
-        else  return Response.status(201).entity(d).build();
+        List<PointofInterest> list = this.gm.listUserPointsofInterest(id);
+        if (list == null) return Response.status(404).build();
+        else
+        {
+            GenericEntity<List<PointofInterest>> entity = new GenericEntity<List<PointofInterest>>(list) {};
+            return Response.status(201).entity(entity).build();
+        }
+    }
+
+    @PUT
+    @ApiOperation(value = "add a point of interest to the history of an User")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful"),
+            @ApiResponse(code = 404, message = "User/point of interest not found")
+
+    })
+
+    @Path("/{id}/poi")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addListofPointsofInterest(@PathParam("id") Integer id, PointofInterest point)
+    {
+        if (this.gm.addUserPointofInterest(id, point.getHorizontal(), point.getVertical()) == null)
+            return Response.status(404).build();
+        else
+        {
+            return Response.status(200).build();
+        }
     }
 }

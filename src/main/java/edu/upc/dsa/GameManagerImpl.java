@@ -1,5 +1,6 @@
 package edu.upc.dsa;
 
+import edu.upc.dsa.models.ElementType;
 import edu.upc.dsa.models.PointofInterest;
 import edu.upc.dsa.models.User;
 import org.apache.log4j.Logger;
@@ -34,10 +35,6 @@ public class GameManagerImpl implements GameManager {
     //Functions that takes all the values necessaries to construct a new User and
     //passes them as a user object to be initialized
     public User createUser(Integer id, String name, String surname, String email, String birthday){
-        if (id == null)
-        {
-            id = this.sizeUsers() - 1;
-        }
         return this.addUser(new User(id, name, surname, email, birthday));
     }
 
@@ -79,37 +76,42 @@ public class GameManagerImpl implements GameManager {
     }
 
     //Function that adds a point of interest to the list of points of interest of a user
-    //0: the point of interest has been added
-    //-1: the point of interest or the user does not exist
-    public Integer addUserPointofInterest(Integer id, Integer horizontal, Integer vertical)
+    public List<PointofInterest> addUserPointofInterest(Integer id, Integer horizontal, Integer vertical)
+    {
+        logger.info("Petition to add to the history of user with ID " + id + " a point of interest in coordinates (" + horizontal + ", " + vertical + ")");
+        User user = getUser(id);
+        if (user == null)
+        {
+            return null;
+        }
+        PointofInterest point = getPointofInterest(horizontal, vertical);
+        if (point == null)
+        {
+            logger.warn("Point of interest not added to the list of user with ID " + id + " because of incorrect coordinates");
+            return null;
+        }
+        else
+        {
+            user.addHistory(point);
+            logger.info("Point of interest with coordinates (" + horizontal + "," + vertical + ") added to user with ID " + id);
+            return user.getHistory();
+        }
+    }
+
+    //List all the points of interest a User has passed through in chronological order
+    public List<PointofInterest> listUserPointsofInterest(Integer id)
     {
         User user = getUser(id);
         if (user == null)
         {
-            return -1;
-        }
-        PointofInterest point = getPointofInterest(horizontal, vertical);
-        if (getPointofInterest(horizontal, vertical) == null)
-        {
-            logger.warn("Point of interest not added to the list of user with ID " + id + " because of incorrect coordenates");
-            return -1;
+            return null;
         }
         else
         {
-            user.setHistory(point);
-            logger.info("Point of interest with coordenates (" + horizontal + "," + vertical + ") added to user with ID " + id);
-            return 0;
+            List<PointofInterest> orderedList = new ArrayList<>(user.getHistory());
+            logger.info("Complete travel history of user with ID " + id + ": " + orderedList);
+            return orderedList;
         }
-    }
-
-    //PENDENT
-    //List all the points of interest a User has passed through in chronological order
-    public List<PointofInterest> listUserPointsofInterest(Integer id)
-    {
-        List<PointofInterest> orderedList = new ArrayList<PointofInterest>();
-
-        logger.info("Ordered list of users: " + orderedList);
-        return orderedList;
     }
 
     public int sizePointsofInterest() {
@@ -135,7 +137,7 @@ public class GameManagerImpl implements GameManager {
 
     //Functions that takes all the values necessaries to construct a new drone and
     //passes them as a Drone object to be initialized
-    public PointofInterest createPointofInterest(PointofInterest.ElementType type, Integer horizontal, Integer vertical){
+    public PointofInterest createPointofInterest(ElementType type, Integer horizontal, Integer vertical){
         return this.addPointofInterest(new PointofInterest(type, horizontal, vertical));
     }
 
@@ -146,19 +148,19 @@ public class GameManagerImpl implements GameManager {
         {
             if (p.getHorizontal().equals(horizontal) && p.getVertical().equals(vertical))
             {
-                logger.info("Obtained point of interest with with coordinates (" + horizontal + ", " + vertical + ")");
+                logger.info("Obtained point of interest (" + p.getType() + ") with coordinates (" + horizontal + "," + vertical + ")");
                 return p;
             }
         }
 
-        logger.warn("Point of interest with coordinates (" + horizontal + ", " + vertical + ") not found");
+        logger.warn("Point of interest with coordinates (" + horizontal + "," + vertical + ") not found");
         return null;
     }
 
     //List all the points of interest with a specific type
-    public List<PointofInterest> listPointsofInterest(PointofInterest.ElementType type)
+    public List<PointofInterest> listPointsofInterest(ElementType type)
     {
-        List<PointofInterest> orderedList = new LinkedList<>(this.pointsofinterest);
+        List<PointofInterest> orderedList = new LinkedList<>();
         for(PointofInterest p : this.pointsofinterest)
         {
             if(p.getType().equals(type))
@@ -178,9 +180,44 @@ public class GameManagerImpl implements GameManager {
         }
     }
 
+    //List all the users that have gone through a specific point of interest
+    public List<User> listUsersPointofInterest(Integer horizontal, Integer vertical)
+    {
+        PointofInterest point = getPointofInterest(horizontal, vertical);
+        ArrayList<User> list = new ArrayList<>();
+        if (point == null)
+        {
+            return null;
+        }
+        else
+        {
+            for (User user : this.users)
+            {
+                for (PointofInterest pointuser : user.getHistory())
+                {
+                    if(pointuser.equals(point))
+                    {
+                        list.add(user);
+                        break;
+                    }
+                }
+            }
+            if (list.isEmpty())
+            {
+                logger.warn("No users have passed through the point of interest with coordinates (" + horizontal + "," + vertical + ")");
+                return list;
+            }
+            else
+            {
+                logger.info("List of users tha have passed through " + point + ": " + list);
+                return list;
+            }
+        }
+    }
+
     //Function that serves to clear the entire database
     public void clear() {
         this.pointsofinterest.clear();
+        this.users.clear();
     }
-
 }

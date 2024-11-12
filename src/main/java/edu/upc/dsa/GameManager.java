@@ -1,5 +1,6 @@
 package edu.upc.dsa;
 
+import edu.upc.dsa.models.ElementType;
 import edu.upc.dsa.models.PointofInterest;
 import edu.upc.dsa.models.User;
 
@@ -13,14 +14,15 @@ public interface GameManager {
 
     public List<User> listUsersDescending();
     public List<PointofInterest> listUserPointsofInterest(Integer id);
-    public Integer addUserPointofInterest(Integer id, Integer horizontal, Integer vertical);
+    public List<PointofInterest> addUserPointofInterest(Integer id, Integer horizontal, Integer vertical);
 
     public int sizeUsers();
 
-    public PointofInterest createPointofInterest(PointofInterest.ElementType type, Integer horizontal, Integer vertical);
+    public PointofInterest createPointofInterest(ElementType type, Integer horizontal, Integer vertical);
     public PointofInterest addPointofInterest(PointofInterest point);
     public PointofInterest getPointofInterest(Integer horizontal, Integer vertical);
-    public List<PointofInterest> listPointsofInterest(PointofInterest.ElementType type);
+    public List<PointofInterest> listPointsofInterest(ElementType type);
+    public List<User> listUsersPointofInterest(Integer horizontal, Integer vertical);
 
     public void clear();
     public int sizePointsofInterest();
