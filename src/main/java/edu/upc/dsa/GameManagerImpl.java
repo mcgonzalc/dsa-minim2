@@ -135,8 +135,8 @@ public class GameManagerImpl implements GameManager {
         return p;
     }
 
-    //Functions that takes all the values necessaries to construct a new drone and
-    //passes them as a Drone object to be initialized
+    //Functions that takes all the values necessaries to construct a new point of interest and
+    //passes them as a PointofInterest object to be initialized
     public PointofInterest createPointofInterest(ElementType type, Integer horizontal, Integer vertical){
         return this.addPointofInterest(new PointofInterest(type, horizontal, vertical));
     }
