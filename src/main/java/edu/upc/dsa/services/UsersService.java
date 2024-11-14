@@ -106,9 +106,9 @@ public class UsersService {
 
     @Path("/{id}/poi")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addListofPointsofInterest(@PathParam("id") Integer id, PointofInterest point)
+    public Response addListofPointsofInterest(@PathParam("id") Integer id, @QueryParam("horizontal") int horizontal, @QueryParam("vertical") int vertical)
     {
-        if (this.gm.addUserPointofInterest(id, point.getHorizontal(), point.getVertical()) == null)
+        if (this.gm.addUserPointofInterest(id, horizontal, vertical) == null)
             return Response.status(404).build();
         else
         {
